@@ -1,6 +1,6 @@
-package net.petitviolet.sandbox.meta
+package net.petitviolet.metas.meta
 
-import net.petitviolet.sandbox.meta.macros.Class2Map
+import net.petitviolet.metas.meta.macros.Class2Map
 
 import scala.collection.immutable.{Seq, Stack}
 import scala.meta._
