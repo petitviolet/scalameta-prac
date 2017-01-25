@@ -1,4 +1,4 @@
-package net.petitviolet.metas.meta.macros
+package net.petitviolet.metas
 
 import scala.collection.immutable.Seq
 import scala.meta._
