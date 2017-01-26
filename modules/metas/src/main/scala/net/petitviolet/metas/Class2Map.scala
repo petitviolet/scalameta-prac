@@ -9,7 +9,8 @@ class Class2Map extends scala.annotation.StaticAnnotation {
     defn match {
       case cls @ Defn.Class(_, _, _, Ctor.Primary(_, _, paramss), template) =>
         val namesToValues: Seq[Term.Tuple] = paramss.flatten.map { param =>
-          q"(${Term.Name(param.name.syntax)}, ${Term.Name(param.name.value)})"
+          // looks below is not collect syntax, but can be compiled.
+          q"(${param.name.syntax}, ${Term.Name(param.name.value)})"
         }
         val toMapImpl: Term =
           q"_root_.scala.collection.Map[String, Any](..$namesToValues)"
