@@ -32,3 +32,7 @@ lazy val metas = (project in file("modules/metas"))
   .settings(metaMacroSettings)
   .settings(libraryDependencies += "org.scalameta" %% "scalameta" % "1.4.0")
 
+lazy val app = (project in file("modules/app"))
+  .settings(commonSettings("app"))
+  .settings(metaMacroSettings)
+  .dependsOn(metas)
