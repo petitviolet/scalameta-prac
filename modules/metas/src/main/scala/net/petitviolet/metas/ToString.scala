@@ -5,6 +5,22 @@ import scala.meta.Ctor.Ref.Name
 import scala.meta.Term.Param
 import scala.meta._
 
+/**
+ * - before
+ * {{{
+ * @ToString
+ * class ToStringClassA(n: Int, label: String)
+ * }}}
+ *
+ * - after
+ * {{{
+ * class ToStringClassA(n: Int, label: String) {
+ *   override def toString: String = {
+ *     "ToStringClassA" + "(" + ("n" + ":" + n.toString + ", " + "label" + ":" + label.toString) + ")"
+ *   }
+ * }
+ * }}}
+ */
 class ToString extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     def createToString(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Defn.Def = {
