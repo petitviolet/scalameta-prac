@@ -32,8 +32,8 @@ class ToString extends scala.annotation.StaticAnnotation {
           // as a term like `n.toString`
           val value = s"${param.name}.toString".parse[Term].get
 
-          // "\"n\" + \":\" + n.toString"
-          s"""$paramName + ":" + $value"""
+          // "\"n\" + \": \" + n.toString"
+          s"""$paramName + ": " + $value"""
         }
       }
 
@@ -50,6 +50,7 @@ class ToString extends scala.annotation.StaticAnnotation {
        }
       """
     }
+
     defn match {
       case cls @ Defn.Class(_, name, _, ctor, template) =>
         val toStringMethod: Defn.Def = createToString(name, ctor.paramss)
