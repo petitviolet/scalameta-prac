@@ -7,15 +7,15 @@ import scala.meta._
  * - before
  * {{{
  *  @AddAbstractField
-    trait Uses[MyOriginalService]
+    trait AddField[MyOriginalService]
  * }}}
  *
  * - after
  * {{{
- *  trait Uses[MyOriginalService] {val myOriginalService: MyOriginalService}
+ *  trait AddField[MyOriginalService] {val myOriginalService: MyOriginalService}
  * }}}
  */
-class AddAbstractField extends scala.annotation.StaticAnnotation {
+class AddField extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     def createFieldToAdd(tparams: Seq[Type.Param]) = {
       val fields = tparams.map { tparam =>
@@ -48,4 +48,30 @@ class AddAbstractField extends scala.annotation.StaticAnnotation {
     }
   }
 
+}
+
+
+class UsesField extends scala.annotation.StaticAnnotation {
+  inline def apply(defn: Any): Any = meta {
+    defn match {
+      case cls@Defn.Trait(_, _, tparams, _, template) =>
+        val addField = UsesField.createFieldToAdd(classOf[String])
+        val templateStats: Seq[Stat] =
+          addField +: template.stats.getOrElse(Nil)
+
+        cls.copy(templ = template.copy(stats = Some(templateStats)))
+    }
+  }
+}
+
+object UsesField {
+  def createFieldToAdd[_](clazz: Class[_]) = {
+    val fieldName = {
+      val name = clazz.getSimpleName
+      val valName = name.head.toLower + name.tail
+      Pat.Var.Term(Term.Name(valName))
+    }
+    val typeName = Type.Name(clazz.getSimpleName)
+    q"val $fieldName: $typeName"
+  }
 }
