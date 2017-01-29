@@ -1,6 +1,7 @@
 package net.petitviolet.metas
 
 import scala.collection.immutable.Seq
+import scala.meta.Decl.Val
 import scala.meta._
 
 /**
@@ -17,23 +18,9 @@ import scala.meta._
  */
 class AddField extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
-    def createFieldToAdd(tparams: Seq[Type.Param]) = {
-      val fields = tparams.map { tparam =>
-        val typeName = tparam.name.syntax
-        val fieldName = {
-          val valName = typeName.head.toLower + typeName.tail
-          Pat.Var.Term(Term.Name(valName))
-        }
-        val typeAnnotation = Type.Name(typeName)
-
-        q"val $fieldName: $typeAnnotation"
-      }
-      fields
-    }
-
     defn match {
       case cls @ Defn.Trait(_, _, tparams, _, template) =>
-        val addField = createFieldToAdd(tparams)
+        val addField: Seq[Val] = tparams map { tparam => AddField.createFieldToAdd(tparam.name.syntax) }
         val templateStats: Seq[Stat] =
           if (template.syntax.contains("toString")) {
             template.stats getOrElse Nil
@@ -48,6 +35,21 @@ class AddField extends scala.annotation.StaticAnnotation {
     }
   }
 
+}
+
+object AddField {
+  def createFieldToAdd(typeName: String): Val = {
+    val fields = {
+      val fieldName = {
+        val valName = typeName.head.toLower + typeName.tail
+        Pat.Var.Term(Term.Name(valName))
+      }
+      val typeAnnotation = Type.Name(typeName)
+
+      q"val $fieldName: $typeAnnotation"
+    }
+    fields
+  }
 }
 
 
