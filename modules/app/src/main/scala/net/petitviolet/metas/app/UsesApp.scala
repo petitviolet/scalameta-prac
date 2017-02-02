@@ -13,6 +13,7 @@ object MyOriginalService {
   trait ChildService extends MyOriginalService
 }
 
+
 //object MyOriginalService {}
 //
 //private trait UsesDynamicAppTrait extends UsesDynamic[MyOriginalService] {

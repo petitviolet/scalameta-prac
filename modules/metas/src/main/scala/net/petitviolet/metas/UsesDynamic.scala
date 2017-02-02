@@ -1,6 +1,5 @@
 package net.petitviolet.metas
 
-import scala.collection.immutable.Seq
 import scala.language.dynamics
 import scala.meta._
 
@@ -19,6 +18,7 @@ trait UsesDynamic[Service] extends Dynamic {
 
 class Uses extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
+    import scala.collection.immutable.Seq
     defn match {
       case Term.Block(Seq(traitDefn @ Defn.Trait(_, typeName, _, _, _), _: Defn.Object))=>
         // companion objectがある場合
@@ -36,9 +36,12 @@ class Uses extends scala.annotation.StaticAnnotation {
 }
 
 object Uses {
-  def createUsesTrait(typeName: Type.Name): Defn.Trait = {
+  import scala.meta._
+
+  def createUsesTrait(typeName: scala.meta.Type.Name): scala.meta.Defn.Trait = {
     val field: Decl.Val = AddField.createFieldToAdd(typeName.value)
     val traitName: Type.Name = Type.Name(s"Uses${typeName.value}")
     q"trait $traitName { $field }"
   }
+
 }
