@@ -13,10 +13,14 @@ lazy val metaMacroSettings: Seq[Def.Setting[_]] = Seq(
     Resolver.ivyStylePatterns),
   resolvers += Resolver.bintrayIvyRepo("scalameta", "maven"),
   addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0.152" cross CrossVersion.full),
-  libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-  scalacOptions += "-Xplugin-require:macroparadise",
-  scalacOptions in (Compile, console) := Seq(),
-  sources in (Compile, doc) := Nil
+  libraryDependencies ++= Seq(
+    "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+    "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided"
+  ),
+  scalacOptions ++= Seq(
+    "-Xplugin-require:macroparadise",
+    "-Ymacro-debug-lite"
+  )
 )
 
 def commonSettings(name: String) = Seq(
