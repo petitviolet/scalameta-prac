@@ -5,6 +5,7 @@ import scala.collection.immutable.Seq
 
 object validator {
 
+  // add check statement to `val` or `def`
   private def addChecker(defn: Any, checkFunc: (Name, Term) => Term): Defn = {
     defn match {
       case Defn.Val(mods, pats, decltpe, value) =>
@@ -18,6 +19,7 @@ object validator {
     }
   }
 
+  // extract annotation class constructor, `min` and `max`
   private def argumentMinMax(target: AnyRef) = {
     target match {
       case c @ Term.New(Template(_, Seq(Term.Apply(_,
@@ -34,6 +36,9 @@ object validator {
     }
   }
 
+  /**
+   * annotate the value is not null
+   */
   class NonNull extends scala.annotation.StaticAnnotation {
     inline def apply(defn: Any): Any = meta {
       def check(name: Name, term: Term): Term = {
@@ -49,6 +54,9 @@ object validator {
     }
   }
 
+  /**
+   * annotate the value is not empty
+   */
   class NonEmpty extends scala.annotation.StaticAnnotation {
     inline def apply(defn: Any): Any = meta {
       def check(name: Name, term: Term): Term = {
@@ -63,6 +71,13 @@ object validator {
     }
   }
 
+  /**
+   * annotate the value length is
+   *  - longer than or equals to `min`
+   *  - shorter than or equals to `max`
+   * @param min if 0, not bounded
+   * @param max if 0, not bounded
+   */
   class Length(min: Int = 0, max: Int = 0) extends scala.annotation.StaticAnnotation {
     inline def apply(defn: Any): Any = meta {
       def check(min: Int, max: Int)(name: Name, term: Term): Term = {
@@ -93,7 +108,13 @@ object validator {
     }
   }
 
-
+  /**
+   * annotate the value is
+   *  - greater than or equals to `min`
+   *  - less than or equals to `max`
+   * @param min if 0, not bounded
+   * @param max if 0, not bounded
+   */
   class IntRange(min: Int = 0, max: Int = 0) extends scala.annotation.StaticAnnotation {
     inline def apply(defn: Any): Any = meta {
 
