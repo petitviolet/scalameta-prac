@@ -5,7 +5,7 @@ import scala.reflect.macros.whitebox
 
 
 class UsesAnnotation extends scala.annotation.StaticAnnotation {
-  def macroTransform[T](annottees: Any*): Any = macro UsesMacro.usesImpl[T]
+//  def macroTransform[T](annottees: Any*): Any = macro UsesMacro.usesImpl[T]
 }
 
 object UsesMacro {
@@ -26,7 +26,8 @@ object UsesMacro {
 //      x
 //    }
 
-    c.Expr[Any](???)
+//    c.Expr[Any](???)
+    annottees.head
   }
 
 
