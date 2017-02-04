@@ -2,10 +2,9 @@ package net.petitviolet.metas.app
 
 import net.petitviolet.metas.validator._
 
-
 object NonNullApp extends App {
   @NonNull
-  val v1 = 100  // OK
+  val v1 = 100 // OK
 
   @NonNull
   def d1(): Null = {
@@ -15,14 +14,14 @@ object NonNullApp extends App {
 
   @NonNull
   val v2 = {
-//    null // error
+    //    null // error
   }
 
   @NonNull
   lazy val v3 = null
 
-//  println(d1) // error
-//  println(v3) // error
+  //  println(d1) // error
+  //  println(v3) // error
 }
 
 object SizeApp extends App {

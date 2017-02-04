@@ -1,9 +1,9 @@
 package net.petitviolet.metas
 
-import scala.collection.immutable.{Seq, Stack}
+import scala.collection.immutable.{ Seq, Stack }
 import scala.meta._
 import scala.meta.tokens.Token._
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 object MetaExapmle extends App {
   val classSource: Parsed[Source] = """case class Bar(value: String)""".parse[Source]
@@ -23,18 +23,16 @@ object MetaExapmle extends App {
        |""".stripMargin
 
   val result: Seq[String] = target.parse[Source].get.collect {
-    case c @ Case((p"${(name: Pat)}: Throwable", cond: Option[Term], body: Term)) =>
-//      println(s"case => $c, ($name, $cond, $body)")
+    case c @ Case((p"${ (name: Pat) }: Throwable", cond: Option[Term], body: Term)) =>
+      //      println(s"case => $c, ($name, $cond, $body)")
       s"NonFatal(${name.syntax}) => $body"
-//    case c @ p"case $name: Throwable => $expr" =>
-//      println(s"case => $c, class => ${c.getClass}, name: $name, expr => $expr")
-//      c
+    //    case c @ p"case $name: Throwable => $expr" =>
+    //      println(s"case => $c, class => ${c.getClass}, name: $name, expr => $expr")
+    //      c
     case other => other.syntax
   }
   println(result.mkString(""))
 }
-
-
 
 trait Logging {
   def logging(msg: => String, suppress: Boolean = true) = {
@@ -49,7 +47,7 @@ private object TokenExercize extends App with Logging {
     """case class Foo(value: Int) { def double() = value * 2 }""",
     """case class Foo(value: Int) { def double( = value * 2 }""",
     """case class Foo(value: Int)  def double() = value * 2 }"""
-  ).map {_.tokenize.get}
+  ).map { _.tokenize.get }
 
   // 括弧が文法的に合っているかどうか
   def isBalanced(tokens: Tokens): Boolean = {
@@ -98,7 +96,7 @@ private object TokenExercize extends App with Logging {
 
   private def isOpen(token: Token): Boolean = token match {
     case LeftParen() | LeftBrace() | LeftBracket() => true
-    case _ => false
+    case _                                         => false
   }
 
   private def isClose(token: Token): Boolean = token match {
