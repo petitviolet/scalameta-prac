@@ -1,7 +1,5 @@
 package net.petitviolet.metas.app.macros
 
-import scala.reflect.macros.blackbox
-
 sealed trait Point extends Any
 
 case class ReceivedPoint(value: Int) extends AnyVal with Point {
@@ -18,6 +16,8 @@ case class OtherPoint(value: Int)  extends AnyVal with Point {
 
 object Point {
   import scala.language.experimental.macros
+  import scala.reflect.macros.blackbox
+
 
   def add[P <: Point](p1: P, p2: P): P = macro addImpl[P]
 
