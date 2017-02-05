@@ -39,7 +39,7 @@ object UsesTrait {
   import scala.meta._
 
   def createUsesTrait(typeName: scala.meta.Type.Name): scala.meta.Defn.Trait = {
-    val field: Decl.Val = AddField.createFieldToAdd(typeName.value)
+    val field: Decl.Val = Uses.createFieldToAdd(typeName.value)
     val traitName: Type.Name = Type.Name(s"Uses${typeName.value}")
     q"trait $traitName { $field }"
   }
