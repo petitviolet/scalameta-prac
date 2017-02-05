@@ -40,9 +40,8 @@ class ToString extends scala.annotation.StaticAnnotation {
       // "\"n\" + \":\" + n.toString" +
       // ", " +
       // "\"x\" + \":\" + x.toString"
-      val joinedParamStrings: Term = args
+      val joinedParamStrings = args
         .mkString(""" + ", " + """)
-        .parse[Term].get
 
       q"""
        override def toString: String = {
@@ -53,11 +52,11 @@ class ToString extends scala.annotation.StaticAnnotation {
 
     defn match {
       case cls @ Defn.Class(_, name, _, ctor, template) =>
-        val toStringMethod: Defn.Def = createToString(name, ctor.paramss)
         val templateStats: Seq[Stat] =
           if (template.syntax.contains("toString")) {
             template.stats getOrElse Nil
           } else {
+            val toStringMethod: Defn.Def = createToString(name, ctor.paramss)
             toStringMethod +: template.stats.getOrElse(Nil)
           }
 
