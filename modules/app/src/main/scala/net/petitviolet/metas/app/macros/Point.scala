@@ -3,11 +3,11 @@ package net.petitviolet.metas.app.macros
 sealed trait Point extends Any
 
 case class ReceivedPoint(value: Int) extends AnyVal with Point {
-  def +(other: ReceivedPoint): ReceivedPoint = ReceivedPoint(value + other.value)
+  def :+:(other: ReceivedPoint): ReceivedPoint = ReceivedPoint(value + other.value)
 }
 
 case class AvailablePoint(value: Int) extends AnyVal with Point {
-  def +(other: AvailablePoint): AvailablePoint = AvailablePoint(value + other.value)
+  def :+:(other: AvailablePoint): AvailablePoint = AvailablePoint(value + other.value)
 }
 
 case class OtherPoint(value: Int)  extends AnyVal with Point {
@@ -23,7 +23,7 @@ object Point {
 
   def addImpl[P <: Point](c: blackbox.Context)(p1: c.Expr[P], p2: c.Expr[P]): c.Expr[P] = {
     import c.universe._
-    val tree = q"$p1 + $p2"
+    val tree = q"$p1 :+: $p2"
     c.Expr[P](tree)
   }
 }
