@@ -30,12 +30,13 @@ def commonSettings(name: String) = Seq(
 
 lazy val root = (project in file("."))
   .settings(commonSettings("scala-sandbox"))
+  .aggregate(metas, app)
 
 
 lazy val metas = (project in file("modules/metas"))
   .settings(commonSettings("metas"))
   .settings(metaMacroSettings)
-  .settings(libraryDependencies += "org.scalameta" %% "scalameta" % "1.4.0")
+  .settings(libraryDependencies += "org.scalameta" %% "scalameta" % "1.5.0")
 
 lazy val app = (project in file("modules/app"))
   .settings(commonSettings("app"))
