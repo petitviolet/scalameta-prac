@@ -59,16 +59,14 @@ object Uses {
 class MixIn[T](impl: T) extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     val (injectionType: String, impl: Term) = this match {
-      case Term.New(Template(_, Seq(Term.Apply(
-      Term.ApplyType(_, Seq(Type.Name(typeParam: String))), Seq(implName: Term.Name))), _, _)) =>
-        // passed object as an implementation
-        (typeParam, implName)
+      case Term.New(Template(_, Seq(
+            Term.Apply(
+              Term.ApplyType(_, Seq(Type.Name(typeParam: String))),
+              Seq(implArg: Term.Arg)
+            )
+           ), _, _)) =>
+        (typeParam, implArg)
 
-      case Term.New(Template(_, Seq(Term.Apply(
-      Term.ApplyType(_, Seq(Type.Name(typeParam: String))),
-      Seq(implNew: Term.New))), _, _)) =>
-        // passed instantiating class as an implementation
-        (typeParam, implNew)
       case _ =>
         println(this.structure)
         abort("invalid parameters")
