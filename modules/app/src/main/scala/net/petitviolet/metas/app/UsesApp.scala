@@ -1,28 +1,26 @@
 package net.petitviolet.metas.app
 
-// Error:(4, 2) top-level class without companion can only expand either into an eponymous class or into a block consisting in eponymous companions
-//@Uses
-trait MyOriginalService {
-  def double(n: Int) = n * 2
+import net.petitviolet.metas.{ MixIn, Uses }
+
+trait MyService { def double(n: Int) = n * 2 }
+object MyServiceImpl extends MyService
+
+trait OtherService { def triple(n: Int) = n * 3 }
+class OtherServiceImpl extends OtherService
+
+@Uses[MyService]()
+@Uses[OtherService]()
+trait UsesFieldTarget {
+  def showDouble(n: Int) = println(this.myService.double(n))
+  def showTriple(n: Int) = println(this.otherService.triple(n))
 }
 
-object MyOriginalService {
-  //  @UsesTrait
-  trait ChildService extends MyOriginalService
+@MixIn[MyService](MyServiceImpl)
+@MixIn[OtherService](new OtherServiceImpl)
+class UsesFieldTargetImpl extends UsesFieldTarget
+
+object UsesFieldApp extends App {
+  val impl = new UsesFieldTargetImpl
+  impl.showDouble(100) // 200
+  impl.showTriple(100) // 300
 }
-
-//object MyOriginalService {}
-//
-//private trait UsesDynamicAppTrait extends UsesDynamic[MyOriginalService] {
-//  def print() = {
-//    println(this.myOriginalService.double(10))
-//  }
-//}
-//
-//private object UsesDynamicApp extends UsesDynamicAppTrait with App with MixInDynamic[MyOriginalService] {
-//  this.myOriginalService = new MyOriginalService {}
-//  println(this)
-//  print()
-//}
-//
-
