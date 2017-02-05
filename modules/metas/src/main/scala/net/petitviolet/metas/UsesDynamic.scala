@@ -16,17 +16,17 @@ trait UsesDynamic[Service] extends Dynamic {
 }
 
 
-class Uses extends scala.annotation.StaticAnnotation {
+class UsesTrait extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     import scala.collection.immutable.Seq
     defn match {
       case Term.Block(Seq(traitDefn @ Defn.Trait(_, typeName, _, _, _), _: Defn.Object))=>
         // companion objectがある場合
-        val usesTrait = Uses.createUsesTrait(typeName)
+        val usesTrait = UsesTrait.createUsesTrait(typeName)
         Term.Block(traitDefn :: usesTrait :: Nil)
       case traitDefn: Defn.Trait =>
         // companion objectが無い場合
-        val usesTrait = Uses.createUsesTrait(traitDefn.name)
+        val usesTrait = UsesTrait.createUsesTrait(traitDefn.name)
         Term.Block(Seq(traitDefn, usesTrait))
       case _ =>
         println(defn.structure)
@@ -35,7 +35,7 @@ class Uses extends scala.annotation.StaticAnnotation {
   }
 }
 
-object Uses {
+object UsesTrait {
   import scala.meta._
 
   def createUsesTrait(typeName: scala.meta.Type.Name): scala.meta.Defn.Trait = {
