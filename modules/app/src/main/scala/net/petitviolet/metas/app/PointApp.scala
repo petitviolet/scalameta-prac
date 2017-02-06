@@ -16,6 +16,7 @@ object PointApp extends App {
   val o1 = OtherPoint(50)
   val o2 = OtherPoint(30)
   // cannot compile
+  // Error: value :+: is not a member of net.petitviolet.metas.app.macros.OtherPoint
   // Point.add(o1, o2)
 }
 
