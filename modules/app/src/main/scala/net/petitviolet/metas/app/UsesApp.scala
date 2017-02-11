@@ -2,21 +2,21 @@ package net.petitviolet.metas.app
 
 import net.petitviolet.metas.{ MixIn, Uses }
 
-trait MyService { def double(n: Int) = n * 2 }
-object MyServiceImpl extends MyService
+trait DoubleService { def double(n: Int) = n * 2 }
+object DoubleServiceImpl extends DoubleService
 
-trait OtherService { def triple(n: Int) = n * 3 }
-class OtherServiceImpl extends OtherService
+trait TripleService { def triple(n: Int) = n * 3 }
+class TripleServiceImpl extends TripleService
 
-@Uses[MyService]()
-@Uses[OtherService]()
+@Uses[DoubleService]
+@Uses[TripleService]
 trait UsesFieldTarget {
-  def showDouble(n: Int) = println(this.myService.double(n))
-  def showTriple(n: Int) = println(this.otherService.triple(n))
+  def showDouble(n: Int) = println(this.doubleService.double(n))
+  def showTriple(n: Int) = println(this.tripleService.triple(n))
 }
 
-@MixIn[MyService](MyServiceImpl)
-@MixIn[OtherService](new OtherServiceImpl)
+@MixIn[DoubleService](DoubleServiceImpl)
+@MixIn[TripleService](new TripleServiceImpl)
 class UsesFieldTargetImpl extends UsesFieldTarget
 
 object UsesFieldApp extends App {
