@@ -1,29 +1,31 @@
 package net.petitviolet.metas.app.macros
 
-sealed trait Point extends Any
+import scala.language.experimental.macros
+import scala.language.reflectiveCalls
 
-case class ReceivedPoint(value: Int) extends AnyVal with Point {
+sealed trait Point {
+  type Self = Int // >: this.type /**/>: Point
+  def :+:(other: Self): Self// = ??? // = PointOps.add[P#Self](this.asInstanceOf[P#Self], other)
+
+//  def :+:[P <: Point](other:P): P = add(this.asInstanceOf[P], other)
+//  def add[P <: Point](self: P, other:P): P = PointOps.add[P](self, other)
+
+//  def :+:[P <: Point](other:P): P = PointOps.add[P](this.asInstanceOf[P], other)
+}
+
+case class ReceivedPoint(value: Int) extends Point { //self: Point.Self =>
+//  override type Self = ReceivedPoint
   def :+:(other: ReceivedPoint): ReceivedPoint = ReceivedPoint(value + other.value)
+
+  override def :+:(other: Self): Self = ???
 }
 
-case class AvailablePoint(value: Int) extends AnyVal with Point {
+case class AvailablePoint(value: Int) extends Point {
+//  override type Self = AvailablePoint
   def :+:(other: AvailablePoint): AvailablePoint = AvailablePoint(value + other.value)
+  override def :+:(other: Self): Self = ???
 }
 
-case class OtherPoint(value: Int)  extends AnyVal with Point {
-
-}
-
-object Point {
-  import scala.language.experimental.macros
-  import scala.reflect.macros.blackbox
-
-
-  def add[P <: Point](p1: P, p2: P): P = macro addImpl[P]
-
-  def addImpl[P <: Point](c: blackbox.Context)(p1: c.Expr[P], p2: c.Expr[P]): c.Expr[P] = {
-    import c.universe._
-    val tree = q"$p1 :+: $p2"
-    c.Expr[P](tree)
-  }
-}
+//case class OtherPoint(value: Int)  extends Point {
+//  def :+:(other: P): P = OtherPoint(value + other.value)
+//}
