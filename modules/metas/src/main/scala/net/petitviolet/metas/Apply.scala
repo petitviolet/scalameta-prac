@@ -4,11 +4,12 @@ import scala.collection.immutable.Seq
 import scala.meta._
 
 // https://github.com/scalameta/tutorial/tree/master/macros/src/main/scala/scalaworld/macros
-class WithApply extends scala.annotation.StaticAnnotation {
+class Apply extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     def createApply(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Defn.Def = {
-      val args = paramss.map(_.map(param => Term.Name(param.name.value)))
-      q"""def apply(...$paramss): $name =
+      val args = paramss.map { _.map { param => Term.Name(param.name.value) } }
+      val defArgs = paramss.map { _.map { param => param.copy(mods = Nil) }}
+      q"""def apply(...$defArgs): $name =
             new ${Ctor.Ref.Name(name.value)}(...$args)"""
     }
     defn match {
@@ -29,7 +30,7 @@ class WithApply extends scala.annotation.StaticAnnotation {
         Term.Block(Seq(cls, companion))
       case _ =>
         println(defn.structure)
-        abort("@WithApply must annotate a class.")
+        abort("@Apply must annotate a class.")
     }
   }
 }
