@@ -1,9 +1,11 @@
 package net.petitviolet.metas
 
+import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
 import scala.meta._
 
 // https://github.com/scalameta/tutorial/tree/master/macros/src/main/scala/scalaworld/macros
+@compileTimeOnly("not expanded")
 class Apply extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     def createApply(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Defn.Def = {

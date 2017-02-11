@@ -1,15 +1,11 @@
 package net.petitviolet.metas
 
+import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
 import scala.meta.Term.Select
 import scala.meta._
 
-class Hoge(val n: Int, val s: String)
-
-object Hoge {
-  def unapply(arg: Hoge): Option[(Int, String)] = Some((arg.n, arg.s))
-}
-
+@compileTimeOnly("not expanded")
 class Unapply extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     def createUnApply(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Defn.Def = {
