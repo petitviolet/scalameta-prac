@@ -31,7 +31,22 @@ class Unapply extends scala.annotation.StaticAnnotation {
 }
 
 object Unapply {
-  private[petitviolet] def createUnApply(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Defn.Def = {
+  def insertUnapply(cls: Defn.Class, companionOpt: Option[Defn.Object] = None): Defn.Object = {
+    val (name, paramss) = (cls.name, cls.ctor.paramss)
+    def unApplyMethod = Unapply.createUnApply(name, paramss)
+
+    companionOpt map { companion =>
+      val stats = companion.templ.stats getOrElse Nil
+      if (containsUnapply(stats)) companion
+      else companion.copy(templ = companion.templ.copy(stats = Some(unApplyMethod +: stats)))
+    } getOrElse {
+      q"object ${Term.Name(name.value)} { $unApplyMethod }"
+    }
+  }
+
+  private def containsUnapply(stats: Seq[Stat]): Boolean = stats exists { _.syntax contains "def unapply" }
+
+  private def createUnApply(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Defn.Def = {
     val argName = Term.Name("arg")
     val inputParam: Seq[Seq[Term.Param]] = {
       val param: Term.Param = Term.Param(Nil, argName, Some(name), None)
