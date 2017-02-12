@@ -9,34 +9,15 @@ import scala.meta._
 class Case {
   inline def apply(defn: Any): Any = meta {
     defn match {
-      // companion object exists
       case Term.Block(
       Seq(cls @ Defn.Class(_, name, _, ctor, template), companion: Defn.Object)) =>
-        val (cMethods, iMethods) = Case.createMethods(name, ctor.paramss)
-
-        val newCompanion = {
-          val companionStats: Seq[Stat] =
-            cMethods ++: companion.templ.stats.getOrElse(Nil)
-          companion.copy(
-            templ = companion.templ.copy(stats = Some(companionStats)))
-        }
-
-        val newCls = {
-          val instanceTempl = template.copy(stats = Some(iMethods ++: template.stats.getOrElse(Nil)))
-          cls.copy(templ = instanceTempl)
-        }
-
+        // companion object exists
+        val (newCls, newCompanion) = Case.insertMethods(cls, Some(companion))
         Term.Block(Seq(newCls, newCompanion))
-      // companion object does not exists
       case cls @ Defn.Class(_, name, _, ctor, template) =>
-        val (cMethods, iMethods) = Case.createMethods(name, ctor.paramss)
-        val companion   = q"object ${Term.Name(name.value)} { ..$cMethods }"
-
-        val newCls = {
-          val instanceTempl = template.copy(stats = Some(iMethods ++: template.stats.getOrElse(Nil)))
-          cls.copy(templ = instanceTempl)
-        }
-        Term.Block(Seq(newCls, companion))
+        // companion object does not exists
+        val (newCls, newCompanion) = Case.insertMethods(cls, None)
+        Term.Block(Seq(newCls, newCompanion))
       case _ =>
         println(defn.structure)
         abort("@Unapply must annotate a class.")
@@ -45,18 +26,16 @@ class Case {
 }
 
 object Case {
-  private[petitviolet] def createCompanionMethods(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Seq[Defn.Def] = {
-    val applyMethod = Apply.createApply(name, paramss)
-    val unApplyMethod = Unapply.createUnApply(name, paramss)
-    applyMethod :: unApplyMethod :: Nil
+  private def insertInstanceMethods(cls: Defn.Class): Defn.Class = {
+    ToString.insertToString(cls)
   }
-  private[petitviolet] def createInstanceMethods(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Seq[Defn.Def] = {
-    val toStringMethod = ToString.createToString(name, paramss)
-    toStringMethod :: Nil
+  private def insertCompanionMethods(cls: Defn.Class, companionOpt: Option[Defn.Object]): Defn.Object = {
+    val applyCompanion = Apply.insertApply(cls, companionOpt)
+    Unapply.insertUnapply(cls, Some(applyCompanion))
   }
 
-  private[petitviolet] def createMethods(name: Type.Name, paramss: Seq[Seq[Term.Param]]): (Seq[Def], Seq[Def]) = {
-    (createCompanionMethods(name, paramss), createInstanceMethods(name, paramss))
+  def insertMethods(cls: Defn.Class, companionOpt: Option[Defn.Object]): (Defn.Class, Defn.Object) = {
+    (insertInstanceMethods(cls), insertCompanionMethods(cls, companionOpt))
   }
 
 }
