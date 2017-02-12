@@ -23,7 +23,7 @@ class ToString extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     defn match {
       case cls @ Defn.Class(_, name, _, ctor, template) =>
-        ToString.insertToString(cls)
+        ToString.insert(cls)
       case _ =>
         println(defn.structure)
         abort("@ToString must annotate a class.")
@@ -31,25 +31,12 @@ class ToString extends scala.annotation.StaticAnnotation {
   }
 }
 
-object ToString {
+object ToString extends InstanceMethodHelper {
 
-  def insertToString(cls: Defn.Class): Defn.Class = {
-    val Defn.Class(_, name, _, ctor, template) = cls
-    val stats = template.stats getOrElse Nil
-    val templateStats: Seq[Stat] =
-      if (containsToString(stats)) stats
-      else {
-        val toStringMethod: Defn.Def = ToString.createToString(name, ctor.paramss)
-        toStringMethod +: stats
-      }
+  override protected val METHOD_NAME: String = "toString"
 
-    cls.copy(templ = template.copy(stats = Some(templateStats)))
-  }
-
-  private def containsToString(stats: Seq[Stat]): Boolean = stats.exists { _.syntax.contains("def toString") }
-
-  private def createToString(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Defn.Def = {
-
+  override protected def create(cls: Defn.Class): Defn.Def = {
+    val (name, paramss) = (cls.name, cls.ctor.paramss)
     val args: Seq[String] = paramss.flatMap { params: Seq[Term.Param] =>
       params.map { param: Term.Param =>
         // as just a string like `"n"`

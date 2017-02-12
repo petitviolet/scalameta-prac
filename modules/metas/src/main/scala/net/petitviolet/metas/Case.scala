@@ -27,11 +27,12 @@ class Case {
 
 object Case {
   private def insertInstanceMethods(cls: Defn.Class): Defn.Class = {
-    ToString.insertToString(cls)
+    (ToString.insert _ compose Equals.insert)(cls)
   }
   private def insertCompanionMethods(cls: Defn.Class, companionOpt: Option[Defn.Object]): Defn.Object = {
-    val applyCompanion = Apply.insertApply(cls, companionOpt)
-    Unapply.insertUnapply(cls, Some(applyCompanion))
+    (Apply.insert(cls) _ andThen
+      Option.apply[Defn.Object] andThen
+      Unapply.insert(cls))(companionOpt)
   }
 
   def insertMethods(cls: Defn.Class, companionOpt: Option[Defn.Object]): (Defn.Class, Defn.Object) = {

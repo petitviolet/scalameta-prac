@@ -12,17 +12,12 @@ class Unapply extends scala.annotation.StaticAnnotation {
       case Term.Block(
       Seq(cls @ Defn.Class(_, name, _, ctor, _),
       companion: Defn.Object)) =>
-        val unApplyMethod = Unapply.createUnApply(name, ctor.paramss)
-        val templateStats: Seq[Stat] =
-          unApplyMethod +: companion.templ.stats.getOrElse(Nil)
-        val newCompanion = companion.copy(
-          templ = companion.templ.copy(stats = Some(templateStats)))
+        val newCompanion = Unapply.insert(cls)(Some(companion))
         Term.Block(Seq(cls, newCompanion))
       // companion object does not exists
       case cls @ Defn.Class(_, name, _, ctor, _) =>
-        val unApplyMethod = Unapply.createUnApply(name, ctor.paramss)
-        val companion   = q"object ${Term.Name(name.value)} { $unApplyMethod }"
-        Term.Block(Seq(cls, companion))
+        val newCompanion = Unapply.insert(cls)(None)
+        Term.Block(Seq(cls, newCompanion))
       case _ =>
         println(defn.structure)
         abort("@Unapply must annotate a class.")
@@ -30,23 +25,11 @@ class Unapply extends scala.annotation.StaticAnnotation {
   }
 }
 
-object Unapply {
-  def insertUnapply(cls: Defn.Class, companionOpt: Option[Defn.Object] = None): Defn.Object = {
+object Unapply extends CompanionMethodHelper {
+  override protected val METHOD_NAME: String = "unapply"
+
+  override protected def create(cls: Defn.Class)(companionOpt: Option[Defn.Object]): Defn.Def = {
     val (name, paramss) = (cls.name, cls.ctor.paramss)
-    def unApplyMethod = Unapply.createUnApply(name, paramss)
-
-    companionOpt map { companion =>
-      val stats = companion.templ.stats getOrElse Nil
-      if (containsUnapply(stats)) companion
-      else companion.copy(templ = companion.templ.copy(stats = Some(unApplyMethod +: stats)))
-    } getOrElse {
-      q"object ${Term.Name(name.value)} { $unApplyMethod }"
-    }
-  }
-
-  private def containsUnapply(stats: Seq[Stat]): Boolean = stats exists { _.syntax contains "def unapply" }
-
-  private def createUnApply(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Defn.Def = {
     val argName = Term.Name("arg")
     val inputParam: Seq[Seq[Term.Param]] = {
       val param: Term.Param = Term.Param(Nil, argName, Some(name), None)

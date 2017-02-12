@@ -1,13 +1,14 @@
 package net.petitviolet.metas
 
 import scala.collection.immutable.Seq
+import scala.meta.Defn.{Class, Def}
 import scala.meta._
 
 class Equals extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     defn match {
       case cls @ Defn.Class(_, name, _, ctor, template) =>
-        Equals.insertEquals(cls)
+        Equals.insert(cls)
       case _ =>
         println(defn.structure)
         abort("@Equals must annotate a class.")
@@ -15,24 +16,12 @@ class Equals extends scala.annotation.StaticAnnotation {
   }
 }
 
-object Equals {
+object Equals extends InstanceMethodHelper {
 
-  def insertEquals(cls: Defn.Class): Defn.Class = {
-    val Defn.Class(_, name, _, ctor, template) = cls
-    val stats = template.stats getOrElse Nil
-    val templateStats: Seq[Stat] =
-      if (containsEquals(stats)) stats
-      else {
-        val EqualsMethod: Defn.Def = Equals.createEquals(name, ctor.paramss)
-        EqualsMethod +: stats
-      }
+  override protected val METHOD_NAME: String = "equals"
 
-    cls.copy(templ = template.copy(stats = Some(templateStats)))
-  }
-
-  private def containsEquals(stats: Seq[Stat]): Boolean = stats.exists { _.syntax.contains("def equals") }
-
-  private def createEquals(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Defn.Def = {
+  override protected def create(cls: Defn.Class): Defn.Def = {
+    val (name, paramss) = (cls.name, cls.ctor.paramss)
     val argName = Term.Name("obj")
     val arg = {
       val inputType = Type.Name("Any")
@@ -63,4 +52,6 @@ object Equals {
        }
      """
   }
+
 }
+
