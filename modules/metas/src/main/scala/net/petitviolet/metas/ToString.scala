@@ -1,7 +1,6 @@
 package net.petitviolet.metas
 
 import scala.collection.immutable.Seq
-import scala.meta.Term.Param
 import scala.meta._
 
 /**
@@ -51,8 +50,8 @@ object ToString {
 
   private def createToString(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Defn.Def = {
 
-    val args: Seq[String] = paramss.flatMap { params: Seq[Param] =>
-      params.map { param: Param =>
+    val args: Seq[String] = paramss.flatMap { params: Seq[Term.Param] =>
+      params.map { param: Term.Param =>
         // as just a string like `"n"`
         val paramName = s""""${param.name}""""
         // as a term like `n.toString`
