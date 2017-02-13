@@ -95,3 +95,6 @@ object UsesApp extends App {
 - [validator.scala](https://github.com/petitviolet/scalameta-prac/blob/master/modules/metas/src/main/scala/net/petitviolet/metas/validator.scala)
     - [example](https://github.com/petitviolet/scalameta-prac/blob/master/modules/app/src/main/scala/net/petitviolet/metas/app/ValidatorApp.scala)
 
+# Lisence
+
+[MIT License](https://petitviolet.mit-license.org/)
