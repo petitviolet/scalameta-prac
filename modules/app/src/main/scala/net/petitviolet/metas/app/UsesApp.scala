@@ -10,17 +10,17 @@ class TripleServiceImpl extends TripleService
 
 @Uses[DoubleService]
 @Uses[TripleService]
-trait UsesFieldTarget {
+trait UsesServices {
   def showDouble(n: Int) = println(this.doubleService.double(n))
   def showTriple(n: Int) = println(this.tripleService.triple(n))
 }
 
 @MixIn[DoubleService](DoubleServiceImpl)
 @MixIn[TripleService](new TripleServiceImpl)
-class UsesFieldTargetImpl extends UsesFieldTarget
+class UsesFieldServicesImpl extends UsesServices
 
-object UsesFieldApp extends App {
-  val impl = new UsesFieldTargetImpl
+object UsesApp extends App {
+  val impl = new UsesFieldServicesImpl
   impl.showDouble(100) // 200
   impl.showTriple(100) // 300
 }
