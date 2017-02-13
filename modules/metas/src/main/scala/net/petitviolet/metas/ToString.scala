@@ -56,7 +56,7 @@ object ToString extends InstanceMethodHelper {
       .mkString(""" + ", " + """).parse[Term].get
 
     q"""
-       override def toString: String = {
+       override def ${Term.Name(METHOD_NAME)}: String = {
          ${name.syntax} + "(" + $joinedParamStrings + ")"
        }
       """
