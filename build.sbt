@@ -12,7 +12,7 @@ lazy val metaMacroSettings: Seq[Def.Setting[_]] = Seq(
     url("http://dl.bintray.com/content/sbt/sbt-plugin-releases"))(
     Resolver.ivyStylePatterns),
   resolvers += Resolver.bintrayIvyRepo("scalameta", "maven"),
-  addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0.152" cross CrossVersion.full),
+  addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M7" cross CrossVersion.full),
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided"
@@ -23,20 +23,21 @@ lazy val metaMacroSettings: Seq[Def.Setting[_]] = Seq(
   )
 )
 
-def commonSettings(name: String) = Seq(
+def commonSettings(moduleName: String) = Seq(
+  name := moduleName,
   scalaVersion := scala,
   version := "1.0"
 )
 
-lazy val root = (project in file("."))
-  .settings(commonSettings("scala-sandbox"))
+lazy val scalaMetaPractice = (project in file("."))
+  .settings(commonSettings("scalameta-prac"))
   .aggregate(metas, app)
 
 
 lazy val metas = (project in file("modules/metas"))
   .settings(commonSettings("metas"))
   .settings(metaMacroSettings)
-  .settings(libraryDependencies += "org.scalameta" %% "scalameta" % "1.5.0")
+  .settings(libraryDependencies += "org.scalameta" %% "scalameta" % "1.8.0")
 
 lazy val app = (project in file("modules/app"))
   .settings(commonSettings("app"))
