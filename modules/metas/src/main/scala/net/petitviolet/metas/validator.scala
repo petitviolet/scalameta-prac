@@ -1,4 +1,5 @@
 package net.petitviolet.metas
+import scala.annotation.compileTimeOnly
 import scala.meta.Pat.Var.{Term => PTerm}
 import scala.meta._
 import scala.collection.immutable.Seq
@@ -39,6 +40,7 @@ object validator {
   /**
    * annotate the value is not null
    */
+  @compileTimeOnly("non null")
   class NonNull extends scala.annotation.StaticAnnotation {
     inline def apply(defn: Any): Any = meta {
       def check(name: Name, term: Term): Term = {
@@ -57,6 +59,7 @@ object validator {
   /**
    * annotate the value is not empty
    */
+  @compileTimeOnly("non empty")
   class NonEmpty extends scala.annotation.StaticAnnotation {
     inline def apply(defn: Any): Any = meta {
       def check(name: Name, term: Term): Term = {
@@ -78,6 +81,7 @@ object validator {
    * @param min if 0, not bounded
    * @param max if 0, not bounded
    */
+  @compileTimeOnly("match specified length")
   class Length(min: Int = 0, max: Int = 0) extends scala.annotation.StaticAnnotation {
     inline def apply(defn: Any): Any = meta {
       def check(min: Int, max: Int)(name: Name, term: Term): Term = {
@@ -115,6 +119,7 @@ object validator {
    * @param min if 0, not bounded
    * @param max if 0, not bounded
    */
+  @compileTimeOnly("match specified range")
   class IntRange(min: Int = 0, max: Int = 0) extends scala.annotation.StaticAnnotation {
     inline def apply(defn: Any): Any = meta {
 

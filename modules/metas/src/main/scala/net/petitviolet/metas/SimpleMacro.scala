@@ -22,16 +22,16 @@ object MetaExapmle extends App {
        |}
        |""".stripMargin
 
-  val result: Seq[String] = target.parse[Source].get.collect {
-    case c @ Case((p"${ (name: Pat) }: Throwable", cond: Option[Term], body: Term)) =>
-      //      println(s"case => $c, ($name, $cond, $body)")
-      s"NonFatal(${name.syntax}) => $body"
-    //    case c @ p"case $name: Throwable => $expr" =>
-    //      println(s"case => $c, class => ${c.getClass}, name: $name, expr => $expr")
-    //      c
-    case other => other.syntax
-  }
-  println(result.mkString(""))
+  //  val result: Seq[String] = target.parse[Source].get.collect {
+  //    case c @ Case((p"${ (name: Pat) }: Throwable", cond: Option[Term], body: Term)) =>
+  //      //      println(s"case => $c, ($name, $cond, $body)")
+  //      s"NonFatal(${name.syntax}) => $body"
+  //    //    case c @ p"case $name: Throwable => $expr" =>
+  //    //      println(s"case => $c, class => ${c.getClass}, name: $name, expr => $expr")
+  //    //      c
+  //    case other => other.syntax
+  //  }
+  //  println(result.mkString(""))
 }
 
 trait Logging {
