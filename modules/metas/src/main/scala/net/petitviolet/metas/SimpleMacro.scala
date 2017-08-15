@@ -5,11 +5,11 @@ import scala.meta._
 import scala.meta.tokens.Token._
 import scala.util.{ Failure, Success, Try }
 
-object MetaExapmle extends App {
+object MetaExample extends App {
   val classSource: Parsed[Source] = """case class Bar(value: String)""".parse[Source]
   val nameStat: Parsed[Stat] = """val name = "hoge"""".parse[Stat]
-  val valName: Defn.Val = q"""val name = "hoge""""
-  val defName: Defn.Def = q"""def name = "hoge""""
+  val valName: Defn.Val = q"""val name = ${Lit.String("hoge")}"""
+  val defName: Defn.Def = q"""def name = ${Lit.String("hoge")}"""
   val fooClass: Defn.Class = q"case class Foo(value: Int) extends AnyVal"
 
   val target =
