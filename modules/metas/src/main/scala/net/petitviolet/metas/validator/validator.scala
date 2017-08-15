@@ -13,9 +13,10 @@ class NonNull extends scala.annotation.StaticAnnotation {
     def check(name: Name, term: Term): Term = {
       lazy val msg = Lit.String(s"$name is null")
       q"""
-           val result = $term
-           result
-         """
+       val result = $term
+       require(result != ${Lit.Null(null)}, $msg)
+       result
+       """
     }
 
     addChecker(defn, check)
