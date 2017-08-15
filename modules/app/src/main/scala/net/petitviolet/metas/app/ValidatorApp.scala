@@ -11,18 +11,18 @@ object NonNullApp extends App {
   }// OK
 
   @NonNull
-  def d1(): Null = {
+  val d1 = {
     val n = 1 + 100
-    null
+    // null // error
   }
 
   @NonNull
-  def v2 = {
-    //    null // error
+  val v2 = {
+    // null // error
   }
 
   @NonNull
-  def v3 = null
+  val v3 = null
 
   //  println(d1) // error
   //  println(v3) // error
@@ -30,36 +30,36 @@ object NonNullApp extends App {
 
 object SizeApp extends App {
   @Length(1, 10)
-  def seq = 1 to 10 // OK
+  val seq = 1 to 10 // OK
 
   @Length(min = 10)
-  def seq2 = 1 to 10 // OK
+  val seq2 = 1 to 10 // OK
 
   @Length(max = 10)
-  def seq3 = 1 to 10// OK
+  val seq3 = 1 to 10// OK
 
   @Length(1, 100)
-  def seq4 = 1 to 10
+  val seq4 = 1 to 10
 }
 
 object NonEmptyApp extends App {
   @NonEmpty
-  def nonEmtpy = { List(1, 2, 3) }
+  val nonEmpty = { List(1, 2, 3) }
 
   @NonEmpty
-  def empty = Nil // Error
+  val empty = Nil // Error
 }
 
 object RangeApp extends App {
-//  @IntRange(min = Some(1), max = Some(10))
-//  def ok1 = 5
-//
-//  @IntRange(max = Some(10))
-//  def ok2 = 5
-//
-//  @IntRange(min = Some(1))
-//  def ok3 = 5
-//
-//  @IntRange(min = Some(1), max = Some(10))
-//  def ng = 100
+  @IntRange(min = Some(1), max = Some(10))
+  val ok1 = 50
+
+  @IntRange(max = Some(10))
+  val ok2 = 5
+
+  @IntRange(min = Some(1))
+  val ok3 = 5
+
+  @IntRange(min = Some(1), max = Some(10))
+  val ng = 100
 }
