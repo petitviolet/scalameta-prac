@@ -94,22 +94,23 @@ class IntRange(min: Option[Int] = None, max: Option[Int] = None) extends scala.a
 
     def check(min: Option[Int], max: Option[Int])(name: Name, term: Term): Term = {
       def i = Lit.Int.apply _
-
+      def b = Lit.Boolean.apply _
       def s = Lit.String.apply _
 
       def patOptI(opt: Option[Int]) = s"$opt".parse[Term].get
 
       q"""
-          def msg(value: Option[Int]) = {
-            val minCond = if (${patOptI(min)}.isEmpty) ${s("")} else ${patOptI(min)}.get + ${s(" <=")}
-            val maxCond = if (${patOptI(max)}.isEmpty) ${s("")} else ${s("<= ")} + ${patOptI(max)}.get
-            ${Lit.String(name.syntax)} + ${s(" is invalid. ")} + minCond + ${s(" ")} value + ${s(" ")} + maxCond
+          def msg(minOpt: Option[Int], maxOpt: Option[Int], value: Int) = {
+            val minCond: String = minOpt.fold(${s("")}) { v => v + ${s(" <=")} }
+            val maxCond: String = maxOpt.fold(${s("")}) { v => ${s("<= ")} + v }
+            ${Lit.String(name.syntax)} + ${s(" is invalid. ")} + minCond + ${s(" ")} + value + ${s(" ")} + maxCond
           }
-          def minValid(min: Option[Int], value: Int): Boolean = min <= value
-          def maxValid(max: Option[Int], value: Int): Boolean = max >= value
+          def minValid(minOpt: Option[Int], value: Int): Boolean = minOpt.fold(${b(true)}) { _ >= value }
+          def maxValid(maxOpt: Option[Int], value: Int): Boolean = maxOpt.fold(${b(true)}) { _ <= value }
 
           val result: Int = $term
-          require(minValid(${patOptI(min)}, result) && maxValid(${patOptI(max)}, result), msg(result))
+          require(minValid(${patOptI(min)}, result) && maxValid(${patOptI(max)}, result),
+                  msg(${patOptI(min)}, ${patOptI(max)}, result))
           result
          """
     }
