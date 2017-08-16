@@ -7,9 +7,9 @@ object DefMacro {
 }
 
 object DefMacroImpl {
-  def showImpl[A](c: blackbox.Context)(value: c.Expr[A]): c.Expr[String] = {
+  def showImpl[A: c.WeakTypeTag](c: blackbox.Context)(value: c.Expr[A]): c.Expr[String] = {
     import c.universe._
-    val tpeA = c.weakTypeOf[A]
-    c.Expr(Literal(Constant(s"type: ${tpeA.typeSymbol.fullName}, value: ${value.toString()}")))
+    val typeTag = c.weakTypeTag[A]
+    c.Expr[String](Literal(Constant(s"type: ${typeTag.tpe.typeSymbol.fullName}, value: ${value.tree}")))
   }
 }
