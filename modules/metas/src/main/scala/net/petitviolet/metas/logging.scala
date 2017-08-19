@@ -1,8 +1,10 @@
 package net.petitviolet.metas
 
+import scala.annotation.compileTimeOnly
 import scala.meta.Dialect.current
 import scala.meta._
 
+@compileTimeOnly("logging annotation")
 class logging extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     defn match {
@@ -41,3 +43,31 @@ class logging extends scala.annotation.StaticAnnotation {
 //    }
 //  }
 //}
+
+@compileTimeOnly("logging annotation")
+class loggingO(outF: (String) => Unit) extends scala.annotation.StaticAnnotation {
+  inline def apply(defn: Any): Any = meta {
+    val out: Term = this match {
+      case Term.New(Template(_, Seq(Term.Apply(_, Seq(_out))), _, _)) =>
+        Term.Name(_out.syntax)
+    }
+    println("----------------------------------")
+    println(this.structure)
+    println(out)
+    println("----------------------------------")
+    defn match {
+      case q"..$mods def $name(..$paramss): $tpe = $body" =>
+        val paramNames = paramss.map { p => Term.Name(p.name.value) }.reduceLeft {
+          (acc: Term, n: Term) => q"$acc + ${Lit.String(",")} + $n"
+        }
+        q"""
+         ..$mods def $name(..$paramss): $tpe = {
+            $out(${Lit.String(s"[start]${name.value}(")} + $paramNames + ${Lit.String(")")})
+            val result = $body
+            $out(${Lit.String(s"[end]${name.value}(")} + $paramNames + ${Lit.String(") => ")} + result)
+            result
+         }
+         """
+    }
+  }
+}
