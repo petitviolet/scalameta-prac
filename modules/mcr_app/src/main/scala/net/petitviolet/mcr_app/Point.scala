@@ -1,4 +1,4 @@
-package net.petitviolet.metas.app.macros
+package net.petitviolet.mcr_app
 
 import scala.language.experimental.macros
 import scala.language.reflectiveCalls

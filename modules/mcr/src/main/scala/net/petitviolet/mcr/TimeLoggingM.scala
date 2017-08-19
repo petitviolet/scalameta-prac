@@ -1,4 +1,4 @@
-package net.petitviolet.metas.mcr
+package net.petitviolet.mcr
 
 import scala.annotation.compileTimeOnly
 import scala.language.experimental.macros

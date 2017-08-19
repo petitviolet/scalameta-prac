@@ -20,10 +20,10 @@ class UsesTrait extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     import scala.collection.immutable.Seq
     defn match {
-      case Term.Block(Seq(traitDefn @ Defn.Trait(_, typeName, _, _, _), _: Defn.Object))=>
+      case Term.Block(Seq(traitDefn @ Defn.Trait(_, typeName, _, _, _), o: Defn.Object))=>
         // companion objectがある場合
         val usesTrait = UsesTrait.createUsesTrait(typeName)
-        Term.Block(traitDefn :: usesTrait :: Nil)
+        Term.Block(traitDefn :: usesTrait :: o :: Nil)
       case traitDefn: Defn.Trait =>
         // companion objectが無い場合
         val usesTrait = UsesTrait.createUsesTrait(traitDefn.name)

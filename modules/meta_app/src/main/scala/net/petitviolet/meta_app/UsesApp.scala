@@ -1,4 +1,4 @@
-package net.petitviolet.metas.app
+package net.petitviolet.meta_app
 
 import net.petitviolet.metas.{ MixIn, Uses }
 

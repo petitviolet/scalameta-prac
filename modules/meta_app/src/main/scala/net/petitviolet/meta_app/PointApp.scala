@@ -1,6 +1,6 @@
-package net.petitviolet.metas.app
+package net.petitviolet.meta_app
 
-import net.petitviolet.metas.app.macros._
+import net.petitviolet.metas._
 
 //object PointApp extends App {
 //  val a1 = AvailablePoint(100)

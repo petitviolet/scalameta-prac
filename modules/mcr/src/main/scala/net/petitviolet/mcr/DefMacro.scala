@@ -1,4 +1,5 @@
-package net.petitviolet.metas.mcr
+package net.petitviolet.mcr
+
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 

@@ -1,6 +1,6 @@
-package net.petitviolet.metas.app.macros
+package net.petitviolet.mcr_app
 
-import net.petitviolet.metas.mcr.TimeLoggingM
+import net.petitviolet.mcr.TimeLoggingM
 
 object TimeLoggingMApp {
   @TimeLoggingM def heavy(n: Long): Long = {
@@ -12,4 +12,3 @@ object TimeLoggingMApp {
     println(heavy(100))
   }
 }
-

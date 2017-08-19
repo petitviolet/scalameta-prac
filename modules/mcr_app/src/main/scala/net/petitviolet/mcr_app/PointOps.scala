@@ -1,4 +1,4 @@
-package net.petitviolet.metas.app.macros
+package net.petitviolet.mcr_app
 
 //object PointOps {
 //  import scala.language.experimental.macros

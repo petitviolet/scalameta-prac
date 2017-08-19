@@ -1,6 +1,6 @@
-package net.petitviolet.metas.app.macros
+package net.petitviolet.mcr_app
 
-import net.petitviolet.metas.mcr.DefMacro
+import net.petitviolet.mcr.DefMacro
 
 object DefMacroApp extends App {
   println(DefMacro.show[Int](100))
