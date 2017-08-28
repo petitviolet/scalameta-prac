@@ -1,10 +1,16 @@
 package net.petitviolet.meta_mirror.app
 
+import scala.meta._
+
 object mirrorApp extends App {
-  import scala.meta._
-  // scalahost plugin required
   implicit val m = Mirror()
-  println(m)
-  println(m.database)
+
+  m.sources.foreach { _.collect {
+    case ref @ q"println(str)" =>
+      println(s"children: ${ref.children}")
+      println(s"parent: ${ref.parent}")
+    case ref @ Term.Name("println") =>
+      println(s"symbol: ${ref.symbol}")
+  }}
 }
 
