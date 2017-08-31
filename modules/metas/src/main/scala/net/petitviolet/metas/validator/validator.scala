@@ -58,24 +58,26 @@ class Length(min: Int = 0, max: Int = 0) extends scala.annotation.StaticAnnotati
 
       q"""
         def msg(min: Int, max: Int, resultSize: Int): String = {
-          val minCond = { if (min <= ${i(0)}) ${s("")} else min + ${s(" <=")} }
-          val maxCond = { if (max <= ${i(0)}) ${s("")} else ${s("<= ")} + max }
-          val res = ${s(name.syntax)} + ${s(" size is invalid. ")} + minCond + ${s(" ")} + resultSize + ${s(" ")} + maxCond
+          val minCond = { if (min <= 0) "" else "min: " + min }
+          val maxCond = { if (max <= 0) "" else "max: " + max }
+          val res = ${s(name.syntax)} + " size is invalid. " +
+              "actual: " + resultSize + ", " + minCond + maxCond
           res
         }
-        def minValid(min: Int, resultSize: Int): Boolean = if (min <= ${i(0)}) ${Lit.Boolean(true)} else min <= resultSize
-        def maxValid(max: Int, resultSize: Int): Boolean = if (max <= ${i(0)}) ${Lit.Boolean(true)} else max >= resultSize
+        def minValid(min: Int, resultSize: Int): Boolean =
+            if (min <= 0) true else min <= resultSize
+        def maxValid(max: Int, resultSize: Int): Boolean =
+            if (max <= 0) true else max >= resultSize
 
         val result = $term
         val size: Int = result.size
-        require(minValid(${i(min)}, size) && maxValid(${i(max)}, size), msg(${i(min)}, ${i(max)}, size))
+        require(minValid(${i(min)}, size) && maxValid(${i(max)}, size),
+                msg(${i(min)}, ${i(max)}, size))
         result
         """
     }
 
     val (minSize, maxSize) = argumentMinMax(this)
-
-//      println(s"min: $minSize, max: $maxSize")
 
     addChecker(defn, check(minSize, maxSize))
   }
@@ -105,8 +107,10 @@ class IntRange(min: Option[Int] = None, max: Option[Int] = None) extends scala.a
             val maxCond: String = maxOpt.fold(${s("")}) { v => ${s("<= ")} + v }
             ${Lit.String(name.syntax)} + ${s(" is invalid. ")} + minCond + ${s(" ")} + value + ${s(" ")} + maxCond
           }
-          def minValid(minOpt: Option[Int], value: Int): Boolean = minOpt.fold(${b(true)}) { _ >= value }
-          def maxValid(maxOpt: Option[Int], value: Int): Boolean = maxOpt.fold(${b(true)}) { _ <= value }
+          def minValid(minOpt: Option[Int], value: Int): Boolean =
+              minOpt.fold(${b(true)}) { _ <= value }
+          def maxValid(maxOpt: Option[Int], value: Int): Boolean =
+              maxOpt.fold(${b(true)}) { _ >= value }
 
           val result: Int = $term
           require(minValid(${patOptI(min)}, result) && maxValid(${patOptI(max)}, result),
