@@ -2,14 +2,12 @@ package net.petitviolet.meta_app
 
 import net.petitviolet.metas.TimeLogging
 
-object TimeLoggingApp {
-  @TimeLogging def heavy(n: Long): Long = {
+object TimeLoggingApp extends App {
+  @TimeLogging
+  def heavy(n: Long): Long = {
     Thread.sleep(n)
     n
   }
 
-  def main(args: Array[String]): Unit = {
-    println(heavy(100))
-  }
-
+  println(heavy(100))
 }

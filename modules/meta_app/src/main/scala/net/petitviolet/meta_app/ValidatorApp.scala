@@ -5,10 +5,7 @@ import net.petitviolet.metas.validator._
 
 object NonNullApp extends App {
   @NonNull
-  def v1: Int = {
-    val x = 100
-    x
-  }// OK
+  val v1: Int = 100 // OK
 
   @NonNull
   val d1 = {
@@ -29,11 +26,11 @@ object NonNullApp extends App {
 }
 
 object SizeApp extends App {
-  @Length(1, 10)
-  val seq = 1 to 10 // OK
+  @Length(min = 1, max = 10)
+  val ok = 1 to 10 // OK
 
-  @Length(min = 10)
-  val seq2 = 1 to 10 // OK
+  @Length(min = 100)
+  val ng = 1 to 10 // NG
 
   @Length(max = 10)
   val seq3 = 1 to 10// OK
@@ -52,14 +49,14 @@ object NonEmptyApp extends App {
 
 object RangeApp extends App {
   @IntRange(min = Some(1), max = Some(10))
-  val ok1 = 50
+  val ok = 5
 
   @IntRange(max = Some(10))
-  val ok2 = 5
+  val ng = 50
 
   @IntRange(min = Some(1))
-  val ok3 = 5
+  val ok2 = 5
 
   @IntRange(min = Some(1), max = Some(10))
-  val ng = 100
+  val ng2 = 100
 }

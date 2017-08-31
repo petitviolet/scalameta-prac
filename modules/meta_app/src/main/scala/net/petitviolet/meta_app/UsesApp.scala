@@ -24,3 +24,13 @@ object UsesApp extends App {
   impl.showDouble(100) // 200
   impl.showTriple(100) // 300
 }
+
+trait MyService {
+  def double(i: Int): Int = i * 2
+}
+
+@MixIn[MyService](new MyService {})
+object MyServiceApp extends App {
+  println(myService.double(100))
+}
+
