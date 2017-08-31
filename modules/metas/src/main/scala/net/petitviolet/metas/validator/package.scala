@@ -20,18 +20,23 @@ package object validator {
     }
 
     // extract annotation class constructor, `min` and `max`
-    def argumentMinMaxOpt(target: AnyRef) = {
+    def argumentMinMaxOpt(target: AnyRef): (Option[Int], Option[Int]) = {
       target match {
         case c @ Term.New(Template(_, Seq(Term.Apply(_,
-        Seq(Term.Arg.Named(Term.Name("min"), Lit(min: Option[Int])),
-        Term.Arg.Named(Term.Name("max"), Lit(max: Option[Int]))))), _, _)) =>
-          (min, max)
+        Seq(
+        Term.Arg.Named(Term.Name("min"),
+        Term.Apply(Term.Name("Some"), Seq(Lit(min: Int)))),
+        Term.Arg.Named(Term.Name("max"),
+        Term.Apply(Term.Name("Some"), Seq(Lit(max: Int))))))), _, _)) =>
+          (Some(min), Some(max))
         case c @ Term.New(Template(_, Seq(Term.Apply(_,
-        Seq(Term.Arg.Named(Term.Name("max"), Lit(max: Option[Int]))))), _, _)) =>
-          (None, max)
+        Seq(Term.Arg.Named(Term.Name("max"),
+        Term.Apply(Term.Name("Some"), Seq(Lit(max: Int))))))), _, _)) =>
+          (None, Some(max))
         case c @ Term.New(Template(_, Seq(Term.Apply(_,
-        Seq(Term.Arg.Named(Term.Name("min"), Lit(min: Option[Int]))))), _, _)) =>
-          (min, None)
+        Seq(Term.Arg.Named(Term.Name("max"),
+        Term.Apply(Term.Name("Some"), Seq(Lit(min: Int))))))), _, _)) =>
+          (Some(min), None)
         case _ => (None, None)
       }
     }
