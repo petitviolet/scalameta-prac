@@ -14,8 +14,8 @@ class Uses[T] extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     val injectionTypeOpt = this match {
       case Term.New(Template(_, Seq(Term.Apply(
-      Term.ApplyType(_, Seq(Type.Name(typeParam: String))), _)), _, _)) =>
-        Some(typeParam)
+      Term.ApplyType(_, Seq(typeName: Type.Name)), _)), _, _)) =>
+        Some(typeName)
       case _ => None
     }
     defn match {
@@ -35,15 +35,14 @@ class Uses[T] extends scala.annotation.StaticAnnotation {
 }
 
 object Uses {
-  private[metas] def createFieldToAdd(typeName: String): Decl.Val = {
+  private[metas] def createFieldToAdd(typeName: Type.Name): Decl.Val = {
     val fields = {
       val fieldName = {
-        val valName = typeName.head.toLower + typeName.tail
+        val _tpeName = typeName.value
+        val valName = _tpeName.head.toLower + _tpeName.tail
         Pat.Var.Term(Term.Name(valName))
       }
-      val typeAnnotation = Type.Name(typeName)
-
-      q"val $fieldName: $typeAnnotation"
+      q"val $fieldName: $typeName"
     }
     fields
   }
@@ -58,14 +57,14 @@ object Uses {
 @compileTimeOnly("@MixIn not expanded")
 class MixIn[T](impl: T) extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
-    val (injectionType: String, impl: Term) =
+    val (injectionType: Type.Name, impl: Term) =
       this match {
         case Term.New(Template(_, Seq(
           Term.Apply(
-            Term.ApplyType(_, Seq(Type.Name(typeParam: String))),
+            Term.ApplyType(_, Seq(typeName)),
             Seq(implArg: Term.Arg)
           )), _, _)) =>
-          (typeParam, implArg)
+          (typeName, implArg)
 
         case _ =>
           println(this.structure)
@@ -93,14 +92,13 @@ class MixIn[T](impl: T) extends scala.annotation.StaticAnnotation {
 
 object MixIn {
 
-  private[metas] def implementationToAdd(typeName: String, impl: Term): Defn.Val = {
+  private[metas] def implementationToAdd(typeName: Type.Name, impl: Term): Defn.Val = {
     val fieldName = {
-      val valName = typeName.head.toLower + typeName.tail
+      val _tpeName = typeName.value
+      val valName = _tpeName.head.toLower + _tpeName.tail
       Pat.Var.Term(Term.Name(valName))
     }
-    val typeAnnotation = Type.Name(typeName)
-
-    q"val $fieldName: $typeAnnotation = $impl"
+    q"val $fieldName: $typeName = $impl"
   }
 
 }
