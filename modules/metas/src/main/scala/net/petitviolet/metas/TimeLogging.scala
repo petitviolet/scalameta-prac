@@ -12,9 +12,12 @@ class TimeLogging extends StaticAnnotation {
         val newBody =
           q"""
           val start = System.nanoTime()
+
           val result = $body
+
           val end = System.nanoTime()
-          println(${s(s"[${name.value}]tracking time:")} + ((end - start) / ${Lit.Long(1000000)}) + ${s(" ms")})
+          println(${s(s"[${name.value}]tracking time:")} +
+              ((end - start) / ${Lit.Long(1000000)}) + ${s(" ms")})
           result
           """
         d.copy(body = newBody)
