@@ -57,7 +57,7 @@ object Uses {
 @compileTimeOnly("@MixIn not expanded")
 class MixIn[T](impl: T) extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
-    val (injectionType: Type.Name, impl: Term) =
+    val (injectionType: Type.Name, injectionTerm: Term) =
       this match {
         case Term.New(Template(_, Seq(
           Term.Apply(
@@ -71,7 +71,7 @@ class MixIn[T](impl: T) extends scala.annotation.StaticAnnotation {
           abort("invalid parameters")
       }
     // to inject a field has implementation
-    val addField = MixIn.implementationToAdd(injectionType, impl)
+    val addField = MixIn.implementationToAdd(injectionType, injectionTerm)
 
     defn match {
       case cls@Defn.Class(_, _, _, _, template) =>

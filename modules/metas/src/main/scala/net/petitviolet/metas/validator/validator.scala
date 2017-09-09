@@ -9,12 +9,12 @@ import scala.meta._
  * annotate the value is not null
  */
 class NonNull extends scala.annotation.StaticAnnotation {
-  inline def apply(defn: Any): Any = meta {
+  @inline def apply(defn: Any): Any = meta {
     def check(name: Name, term: Term): Term = {
       lazy val msg = Lit.String(s"$name is null")
       q"""
        val result = $term
-       require(result != ${Lit.Null(null)}, $msg)
+       require(result != ${Lit.Null()}, $msg)
        result
        """
     }
@@ -31,10 +31,10 @@ class NonEmpty extends scala.annotation.StaticAnnotation {
     def check(name: Name, term: Term): Term = {
       lazy val msg = s"$name is empty."
       q"""
-           val result = $term
-           require(result.nonEmpty, ${Lit.String(msg)})
-           result
-         """
+       val result = $term
+       require(result.nonEmpty, ${Lit.String(msg)})
+       result
+       """
     }
 
     addChecker(defn, check)
@@ -67,12 +67,11 @@ class Length(min: Int = 0, max: Int = 0) extends scala.annotation.StaticAnnotati
         def minValid(min: Int, resultSize: Int): Boolean =
             if (min <= 0) true else min <= resultSize
         def maxValid(max: Int, resultSize: Int): Boolean =
-            if (max <= 0) true else max >= resultSize
+            if (max <= 0) ${Lit.Boolean(true)} else max >= resultSize
 
         val result = $term
         val size: Int = result.size
-        require(minValid(${i(min)}, size) && maxValid(${i(max)}, size),
-                msg(${i(min)}, ${i(max)}, size))
+        require(minValid(${i(min)}, size) && maxValid(${i(max)}, size), msg(${i(min)}, ${i(max)}, size))
         result
         """
     }

@@ -5,7 +5,7 @@ import net.petitviolet.metas.union
 object dialectApp extends App {
   val str: String = "hoge"
   // this project is not Dotty...
-//  @union val str2 = "hoge"
+  //  @union val str2 = "hoge"
 
   import scala.meta._
   {

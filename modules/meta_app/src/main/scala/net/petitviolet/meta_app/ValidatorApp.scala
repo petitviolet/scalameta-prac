@@ -2,7 +2,6 @@ package net.petitviolet.meta_app
 
 import net.petitviolet.metas.validator._
 
-
 object NonNullApp extends App {
   @NonNull
   val v1: Int = 100 // OK
@@ -33,7 +32,7 @@ object SizeApp extends App {
   val ng = 1 to 10 // NG
 
   @Length(max = 10)
-  val seq3 = 1 to 10// OK
+  val seq3 = 1 to 10 // OK
 
   @Length(1, 100)
   val seq4 = 1 to 10
