@@ -8,8 +8,7 @@ object DefMacro {
 }
 
 object DefMacroImpl {
-  def showImpl[A: c.WeakTypeTag](c: blackbox.Context)
-                                (value: c.Expr[A]): c.Expr[String] = {
+  def showImpl[A: c.WeakTypeTag](c: blackbox.Context)(value: c.Expr[A]): c.Expr[String] = {
     import c.universe._
     val typeName = c.weakTypeTag[A].tpe.typeSymbol.fullName
     val tree = value.tree

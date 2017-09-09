@@ -16,7 +16,7 @@ object UsesMacro {
     val mixinType: TypeSymbol = typeSymbol.asType
     val mixInedOpt: Option[Symbol] = typeSymbol.typeSignature.decls.toList.find {
       case x: TermSymbol => x.isVal && x.isCaseAccessor && x.asType == mixinType
-      case _             => false
+      case _ => false
     }
 
     //    val toMixIn: Tree = mixInedOpt getOrElse {

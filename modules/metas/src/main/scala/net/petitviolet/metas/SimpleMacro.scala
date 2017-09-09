@@ -46,8 +46,7 @@ private object TokenExercize extends App with Logging {
     """val x = 10""",
     """case class Foo(value: Int) { def double() = value * 2 }""",
     """case class Foo(value: Int) { def double( = value * 2 }""",
-    """case class Foo(value: Int)  def double() = value * 2 }"""
-  ).map { _.tokenize.get }
+    """case class Foo(value: Int)  def double() = value * 2 }""").map { _.tokenize.get }
 
   // 括弧が文法的に合っているかどうか
   def isBalanced(tokens: Tokens): Boolean = {
@@ -96,7 +95,7 @@ private object TokenExercize extends App with Logging {
 
   private def isOpen(token: Token): Boolean = token match {
     case LeftParen() | LeftBrace() | LeftBracket() => true
-    case _                                         => false
+    case _ => false
   }
 
   private def isClose(token: Token): Boolean = token match {
