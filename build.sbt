@@ -24,6 +24,14 @@ lazy val metaMacroSettings: Seq[Def.Setting[_]] = Seq(
     "-Ymacro-debug-lite"
   )
 )
+
+// not working
+// lazy val scalametaVersion = "2.0.0-RC1"
+lazy val scalametaVersion = "1.8.0"
+lazy val scalametaDependencies = Seq(
+  "org.scalameta" %% "scalameta" % scalametaVersion
+)
+
 lazy val scalahostSettings = Seq(
   addCompilerPlugin("org.scalameta" % "scalahost" % "1.8.0" cross CrossVersion.full),
   scalacOptions ++= Seq(
@@ -55,9 +63,7 @@ lazy val mcrApp = (project in file("modules/mcr_app"))
 lazy val metas = (project in file("modules/metas"))
   .settings(commonSettings("metas", scala212))
   .settings(metaMacroSettings)
-  .settings(libraryDependencies ++= Seq(
-    "org.scalameta" %% "scalameta" % "1.8.0"
-  ))
+  .settings(libraryDependencies ++= scalametaDependencies)
 
 lazy val metaApp = (project in file("modules/meta_app"))
   .settings(commonSettings("metaApp", scala212))
@@ -69,8 +75,6 @@ lazy val metaMirror = (project in file("modules/meta_mirror"))
 
 lazy val metaMirrorApp = (project in file("modules/meta_mirror_app"))
   .settings(commonSettings("metaMirrorApp", scala212))
-  .settings(libraryDependencies ++= Seq(
-    "org.scalameta" %% "scalameta" % "1.8.0"
-  ))
+  .settings(libraryDependencies ++= scalametaDependencies)
   .settings(scalahostSettings)
 //  .dependsOn(metaMirror % Scalameta)  // enable only for run this pr
